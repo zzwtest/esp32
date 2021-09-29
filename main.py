@@ -17,13 +17,27 @@ pin12 = machine.Pin(18, machine.Pin.OUT,machine.Pin.PULL_DOWN)
 
 #machine.deepsleep()
 
-n = 0 
+# n = 0 
+# while 1:
+#     if sta_if.isconnected() :
+#         pin12.value(1)
+#     else:
+#         #pin12.value(0)
+#         pin12.value(n);n = abs(n-1) ;time.sleep_ms(100)
+
+import myphone 
+
+myphone.AT("AT+CSCS=PCCP936")
+myphone.AT("AT+CMGF=1")
+myphone.AT("AT&W")
+
 while 1:
-    if sta_if.isconnected() :
-        pin12.value(1)
-    else:
-        #pin12.value(0)
-        pin12.value(n);n = abs(n-1) ;time.sleep_ms(100)
+    print(myphone.ATLoop())
+#  
+#myphone.AT("AT+RESET")
+
+
+
 
 #import time 
 #while 1 :
