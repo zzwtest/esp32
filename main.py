@@ -1,15 +1,57 @@
 import machine
 import time 
 import esp32 
-#pin12 = machine.Pin(34, machine.Pin.IN)#,machine.Pin.PULL_DOWN)
 import network
+import urequests
+import ujson 
+import sys 
+
+
+
+
+#print(u"呃".encode("utf8"))
+t = u"\u%s" % "5A00"
+
+print([t])
+print(t.encode("utf8"))
+
+sys.exit(0)
+
 sta_if = network.WLAN(network.STA_IF); sta_if.active(True)
+wiflist=  sta_if.scan()                             # Scan for available access points 
 
-sta_if.connect("zzwxiaomi", "163163!!") # Connect to an AP
+home = 0 
+office = 0 
+for w in wiflist:
+    if b"ssmax" in w :
+        office  = 1 
+        break 
+    if b"zzwxiaomi" in w :
+        home = 1 
+        break 
+if office :
+    ssid = "ssmax"
+    passwd= "NTES4ever#23"
+elif home:
+    ssid= "zzwxiaomi"
+    passwd= "163163!!"
+else:
+    ssid= ""
+    passwd= ""
+if ssid :
+    sta_if.connect(ssid, passwd) # Connect to an AP
 
 
+while 1 :
+    if sta_if.isconnected():
+        break 
+    time.sleep_ms(2000)
+    print("%s connected to AP .. %s  status:%s" % (time.time(),ssid,sta_if.status()))
 
-pin12 = machine.Pin(18, machine.Pin.OUT,machine.Pin.PULL_DOWN)
+
+print("connected ok")
+
+#pin12 = machine.Pin(18, machine.Pin.OUT,machine.Pin.PULL_DOWN)
 
 
 #esp32.wake_on_ext0(pin = pin12, level = esp32.WAKEUP_ANY_HIGH)
@@ -27,12 +69,19 @@ pin12 = machine.Pin(18, machine.Pin.OUT,machine.Pin.PULL_DOWN)
 
 import myphone 
 
-myphone.AT("AT+CSCS=PCCP936")
-myphone.AT("AT+CMGF=1")
-myphone.AT("AT&W")
+print(myphone.AT("AT+CSCS=PCCP936"))
+print(myphone.AT("AT+CMGF=1"))
+print(myphone.AT("AT&W"))
+
 
 while 1:
-    print(myphone.ATLoop())
+    res = myphone.ATLoop()
+    #print(res)
+    if res and b"MESSAGE" in res:
+        data = {}
+        data["msg"] = res 
+        print(ujson.dumps(data))
+    
 #  
 #myphone.AT("AT+RESET")
 
