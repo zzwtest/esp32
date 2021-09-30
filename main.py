@@ -5,17 +5,11 @@ import network
 import urequests
 import ujson 
 import sys 
+import ubinascii
 
 
 
 
-#print(u"呃".encode("utf8"))
-t = u"\u%s" % "5A00"
-
-print([t])
-print(t.encode("utf8"))
-
-sys.exit(0)
 
 sta_if = network.WLAN(network.STA_IF); sta_if.active(True)
 wiflist=  sta_if.scan()                             # Scan for available access points 
@@ -50,9 +44,8 @@ while 1 :
 
 
 print("connected ok")
-
+#http://weixin.16163.com/alarm/send?system=sanqi&usernums=g3688&content=111&alarm_types=wx&api_key=3190309696ba864b78841464ae051391
 #pin12 = machine.Pin(18, machine.Pin.OUT,machine.Pin.PULL_DOWN)
-
 
 #esp32.wake_on_ext0(pin = pin12, level = esp32.WAKEUP_ANY_HIGH)
 #machine.lightsleep()
@@ -79,7 +72,7 @@ while 1:
     #print(res)
     if res and b"MESSAGE" in res:
         data = {}
-        data["msg"] = res 
+        data["msg"] = ubinascii.b2a_base64(res)
         print(ujson.dumps(data))
     
 #  
